@@ -1,0 +1,12 @@
+boot/boot
+
+# IntelliJ project files
+.idea/
+*.iml
+*.log
+out
+gen
+target
+
+node_modules/
+_book/
