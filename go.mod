@@ -3,6 +3,7 @@ module github.com/lumeng689/go-micro
 go 1.14
 
 require (
+	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/golang/protobuf v1.4.2
 	github.com/grpc-ecosystem/grpc-gateway v1.14.6
 	github.com/sirupsen/logrus v1.6.0

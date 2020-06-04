@@ -38,8 +38,8 @@ func connectUnSecureGreeterServer() pb.GreeterClient {
 
 func Test_Hello1(t *testing.T) {
 
-	//echoClient := connectSecureGreeterServer()
-	echoClient := connectUnSecureGreeterServer()
+	echoClient := connectSecureGreeterServer()
+	//echoClient := connectUnSecureGreeterServer()
 
 	helloRequest := &pb.HelloRequest{
 		Name: "张三",

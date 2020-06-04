@@ -2,15 +2,19 @@ package server
 
 import (
 	"crypto/tls"
+	"fmt"
+	"github.com/elazarl/go-bindata-assetfs"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
+	"github.com/lumeng689/go-micro/pkg/ui/data/swagger"
 	"github.com/lumeng689/go-micro/pkg/util"
 	pb "github.com/lumeng689/go-micro/proto/demo"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
-	"log"
 	"net"
 	"net/http"
+	"os"
 	"path"
 	"strings"
 )
@@ -28,6 +32,7 @@ var (
 )
 
 func Run() (err error) {
+	initLog()
 	EndPoint = ":" + ServerPort
 	conn, err := net.Listen("tcp", EndPoint)
 	if err != nil {
@@ -50,6 +55,18 @@ func Run() (err error) {
 		}
 	}
 	return err
+}
+
+// 初始化日志
+func initLog() {
+	fmt.Println("init logrus log")
+	// Log as JSON instead of the default ASCII formatter.
+	//log.SetFormatter(&log.JSONFormatter{})
+	// Output to stdout instead of the default stderr
+	// Can be any io.Writer, see below for File example
+	log.SetOutput(os.Stdout)
+	// Only log the warning severity or above.
+	log.SetLevel(log.InfoLevel)
 }
 
 func newSecureServer(conn net.Listener) (*http.Server) {
@@ -133,7 +150,7 @@ func newUnSecureServer(conn net.Listener) (*http.Server) {
 	serveSwaggerUI(mux)
 
 	server := &http.Server{
-		Addr: EndPoint,
+		Addr:    EndPoint,
 		Handler: util.GrpcUnSecureHandlerFunc(grpcServer, mux),
 	}
 
@@ -141,11 +158,11 @@ func newUnSecureServer(conn net.Listener) (*http.Server) {
 }
 
 func serveSwaggerUI(mux *http.ServeMux) {
-   fileServer := http.FileServer(&assetfs.AssetFS{
-       Asset:    swagger.Asset,
-       AssetDir: swagger.AssetDir,
-       Prefix:   "third_party/swagger-ui",
-   })
-   prefix := "/swagger-ui/"
-   mux.Handle(prefix, http.StripPrefix(prefix, fileServer))
+	fileServer := http.FileServer(&assetfs.AssetFS{
+		Asset:    swagger.Asset,
+		AssetDir: swagger.AssetDir,
+		Prefix:   "third_party/swagger-ui",
+	})
+	prefix := "/swagger-ui/"
+	mux.Handle(prefix, http.StripPrefix(prefix, fileServer))
 }
